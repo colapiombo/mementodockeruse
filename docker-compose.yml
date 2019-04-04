@@ -19,8 +19,6 @@ services:
   php:
     build:
       context: './php/'
-      args:
-        PHP_VERSION: ${PHP_VERSION}
     volumes:
      - ${PROJECT_ROOT}/:/var/www/html/
     container_name: php
