@@ -1,0 +1,53 @@
+# for some issue on some arguments go under documentation and read ComposeFileFormat
+version: '3'
+services:
+  mysql:
+    image: mysql:${MYSQL_VERSION}
+    restart: always
+    env_file:
+      - ".env"
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - "./data/db/mysql:/var/lib/mysql"
+    container_name: ${MYSQL_HOST}
+  php:
+    build:
+      context: './php/'
+      args:
+        PHP_VERSION: ${PHP_VERSION}
+  volumes:
+    - ${PROJECT_ROOT}/:/var/www/html/
+  container_name: php
+
+  myadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=${MYSQL_HOST}
+    restart: always
+    depends_on:
+      - mysql
+
+  apache:
+    build:
+      context: './apache/'
+      args:
+        APACHE_VERSION: ${APACHE_VERSION}
+    depends_on:
+      - php
+      - mysql
+    ports:
+      - "80:80"
+    restart: always
+    volumes:
+      - ${PROJECT_ROOT}/:/var/www/html/
+    container_name: apache
