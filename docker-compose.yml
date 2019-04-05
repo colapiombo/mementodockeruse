@@ -1,50 +1,51 @@
 # for some issue on some arguments go under documentation and read ComposeFileFormat
 version: '3'
 services:
-  mysql:
-    image: mysql:${MYSQL_VERSION}
-    restart: always
-    env_file:
-      - ".env"
-    environment:
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-    ports:
-      - "${MYSQL_PASSWORD}:3306"
-    volumes:
-      - "./data/db/mysql:/var/lib/mysql"
-    container_name: ${MYSQL_HOST}
-  myadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
-    ports:
-      - "${PHPMYADMIN_PORT}:80"
-    environment:
-      - PMA_ARBITRARY=1
-      - PMA_HOST=${MYSQL_HOST}
-      - PMA_USER=${MYADMIN_USER}
-      - PMA_PASSWORD= ${MYADMIN_PASSWORD}
-    restart: always
-    depends_on:
-      - mysql
+
+  ### PHP ##############################################
   php:
     build:
-      context: './php/'
+      context: ./php
     volumes:
-      - ${PROJECT_ROOT}/:/var/www/html/
-    container_name: php
+      - ${APP_CODE_PATH_HOST}/:/var/www/html/
 
+  ### phpMyAdmin ###########################################
+  phpmyadmin:
+    build: ./phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - MYSQL_USER=${PMA_USER}
+      - MYSQL_PASSWORD=${PMA_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${PMA_ROOT_PASSWORD}
+    ports:
+      - "${PMA_PORT}:80"
+    depends_on:
+      - "${PMA_DB_ENGINE}"
+
+  ### MariaDB ##############################################
+  mariadb:
+    build: ./mariadb
+    volumes:
+      - ${DATA_PATH_HOST}/mariadb:/var/lib/mysql
+    ports:
+      - "${MARIADB_PORT}:3306"
+    environment:
+      - MYSQL_DATABASE=${MARIADB_DATABASE}
+      - MYSQL_USER=${MARIADB_USER}
+      - MYSQL_PASSWORD=${MARIADB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+
+### Apache Server ########################################
   apache:
     build:
-      context: './apache/'
+      context: ./apache
+    volumes:
+      - ${APP_CODE_PATH_HOST}/:/var/www/html/
+      - ${APACHE_HOST_LOG_PATH}:/var/log/apache2
+      - ${APACHE_SITES_PATH}:/etc/apache2/sites-available
+    ports:
+      - "${APACHE_HOST_HTTP_PORT}:80"
+      - "${APACHE_HOST_HTTPS_PORT}:443"
     depends_on:
       - php
-      - mysql
-    ports:
-      - "${APACHE_PORT}:80"
-    restart: always
-    volumes:
-      - ${PROJECT_ROOT}/:/var/www/html/
-    container_name: apache
+      - mariadb
