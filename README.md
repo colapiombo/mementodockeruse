@@ -1,5 +1,5 @@
-# Apache PHP MySQL 
-Docker running Apache, PHP-FPM, MySQL and PHPMyAdmin.
+# Apache PHP MySQL RabbitMQ ADMINER PHPMYADMIN
+Docker running Apache, PHP-FPM, MySQL Adminer, RabbitMQ and PHPMyAdmin.
 
 ## Overview
 
@@ -49,15 +49,20 @@ sudo apt install build-essential
 * [MySQL](https://hub.docker.com/_/mysql/)
 * [PHP](https://hub.docker.com/_/php)
 * [PHPMyAdmin](https://hub.docker.com/r/phpmyadmin/phpmyadmin/)
+* [RabbitMQ](https://hub.docker.com/_/rabbitmq/)
+* [adminer](https://hub.docker.com/_/adminer)
 
+https://hub.docker.com/_/rabbitmq
 
 This project use the following ports :
 
 | Server     | Port |
 |------------|------|
 | mariadb    | 3306 |
-| PHPMyAdmin | 8080 |
+| adminer    | 8080 |
+| PHPMyAdmin | 80 |
 | apache     | 80/433 |
+| RabbitMQ | 15672 |
 
 ___
 
@@ -78,19 +83,31 @@ cd docker-nginx-php-mysql
 ### Project tree
 ```
 /memento-docker-use/
-├── apache
-│   ├── Dockerfile
-│   └── dev.apache.conf
-├── documentation
-│   ├── command.md
-│   └── compose_file_format.md
-├── mariadb
-│   └── Dockerfile
-├── php
-│   └── Dockerfile
-└── phpmyadmin
-│   └── Dockerfile
-└── public_html
+├── dev
+│   ├── docker
+│   │       ├── adminer
+│   │       │   ├── Dockerfile
+│   │       ├── apache
+│   │       │   ├── Dockerfile
+│   │       │   └── dev.apache.conf
+│   │       ├── apache
+│   │       │   └── Dockerfile
+│   │       ├── mariadb
+│   │       │   └── Dockerfile
+│   │       ├── php
+│   │       │   └── Dockerfile
+│   │       ├── phpmyadmin
+│   │       │   └── Dockerfile
+│   │       └── rabbitmq
+│   │           └── Dockerfile
+│   ├── documentation
+│   │       └──  command.md
+│   │      
+│   └── scripts
+│           ├── hosts.sh
+│           ├── start.sh
+│           └── stop.sh
+├── public_html
 │   └── index.php
 ├── .env
 ├── .gitignore
@@ -106,10 +123,13 @@ ___
 1. Start the application :
 
     ```sh
-    sudo docker-compose up -d
+    sh dev/scripts/start.sh
     ```
 
     **Please wait this might take a several minutes...**
+    ```sh
+    sh dev/scripts/hosts.sh
+    ```
 
     ```sh
     sudo docker-compose logs -f # Follow log output
@@ -117,14 +137,14 @@ ___
 
 3. Open your favorite browser :
 
-    * [http://localhost:8000](http://localhost:8000/)
-    * [https://localhost](https://localhost/) ([HTTPS](#configure-nginx-with-ssl-certificates) not configured by default)
-    * [http://localhost:8080](http://localhost:8080/) PHPMyAdmin (username: dev, password: dev)
+    * [http://project.local](http://project.local/)
+    * [http://adminer.project.local:8080](http://adminer.project.local:8080/) adminer (server:mariadb, username: default, password: secret)
+    * [http://phpmyadmin.project.local](http://phpmyadmin.doodleonchain.local/) phpmyadmin (server:mariadb, username: default, password: secret)
 
 4. Stop and clear services
 
     ```sh
-    sudo docker-compose down -v
+    sh dev/scripts/stop.sh
     ```
 
 
