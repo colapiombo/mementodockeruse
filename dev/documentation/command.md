@@ -30,6 +30,11 @@ dev@ubuntu:~$ docker container ls --all
 dev@ubuntu:~$ docker container ls -aq
 ```
 
+#### List docker network  
+```console
+dev@ubuntu:~$ docker network ls
+```
+
 ##### Removing All Unused Objects
 The docker system prune command will remove all stopped containers,all dangling images, and all unused networks:
 ```console
@@ -38,6 +43,16 @@ dev@ubuntu:~$ docker system prune
 You’ll be prompted to continue, use the -f or --force flag to bypass the prompt.
 ```console
 dev@ubuntu:~$ docker system prune -f
+```
+
+delete all container
+```console
+dev@ubuntu:~$ docker container prune
+```
+
+delete all image
+```console
+dev@ubuntu:~$ docker image prune
 ```
 
 #### Search docker image 
