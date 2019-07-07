@@ -1,44 +1,61 @@
-# for some issue on some arguments go under documentation and read ComposeFileFormat
+# for some issue on some arguments go under documentation
 version: '3'
 services:
-
   ### PHP ##############################################
   php:
     build:
-      context: ./php
+      context: ./dev/docker/php
     volumes:
-      - ${APP_CODE_PATH_HOST}/:/var/www/html/
-
+     - ${APP_CODE_PATH_HOST}/:/var/www/html/
+    environment:
+     - MESSENGER_TRANSPORT_DSN=amqp://guest:guest@rabbitmq:5672/%2f/messages
+    networks:
+      - doodle
+ ### ADMINER ##############################################
+  adminer:
+    build:
+      context: ./dev/docker/adminer
+    depends_on:
+      - mariadb
+    networks:
+      - doodle
+    ports:
+      - 80
   ### phpMyAdmin ###########################################
   phpmyadmin:
-    build: ./phpmyadmin
+    build:
+      context: ./dev/docker/phpmyadmin
     environment:
       - PMA_ARBITRARY=1
       - MYSQL_USER=${PMA_USER}
       - MYSQL_PASSWORD=${PMA_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${PMA_ROOT_PASSWORD}
     ports:
-      - "${PMA_PORT}:80"
+      - 80
     depends_on:
-      - "${PMA_DB_ENGINE}"
-
+      - mariadb
+    networks:
+      - doodle
   ### MariaDB ##############################################
   mariadb:
-    build: ./mariadb
+    build:
+      context: ./dev/docker/mariadb
     volumes:
-      - ${DATA_PATH_HOST}/mariadb:/var/lib/mysql
+      - mariadb:/var/lib/mysql:cached # Persist the database in a Docker volume.
     ports:
-      - "${MARIADB_PORT}:3306"
+      - "3306:3306"
     environment:
       - MYSQL_DATABASE=${MARIADB_DATABASE}
       - MYSQL_USER=${MARIADB_USER}
       - MYSQL_PASSWORD=${MARIADB_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
 
-### Apache Server ########################################
+    networks:
+      - doodle
+  ### Apache Server ########################################
   apache:
     build:
-      context: ./apache
+      context: ./dev/docker/apache
     volumes:
       - ${APP_CODE_PATH_HOST}/:/var/www/html/
       - ${APACHE_HOST_LOG_PATH}:/var/log/apache2
@@ -49,3 +66,25 @@ services:
     depends_on:
       - php
       - mariadb
+    networks:
+      - doodle
+  ### RabbitMQ ########################################
+
+  rabbitmq: # The RabbitMQ container.
+    build:
+      context: ./dev/docker/rabbitmq
+    ports:
+     - 15672:15672
+    volumes:
+     - rabbitmq:/var/lib/rabbitmq:cached
+    networks:
+     - doodle
+
+volumes:
+  rabbitmq:
+  mariadb:
+
+networks:
+  doodle:
+
+    
