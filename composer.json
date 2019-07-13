@@ -1,0 +1,14 @@
+{
+  "name": "MarshallJamesRaynor/memento-docker-use",
+  "description": "Starter for a dockerized application with Apache, PHP, MySQL, RabbitMQ, Adminer, PhpMyAdmin",
+  "keywords": ["php", "docker","apache","rabbitMQ","MySQL","Adminer"],
+  "homepage": "https://github.com/MarshallJamesRaynor/memento-docker-use",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Paolo Combi",
+      "email": "paolo@combi.li",
+      "homepage": "https://combi.li"
+    }
+  ],
+}

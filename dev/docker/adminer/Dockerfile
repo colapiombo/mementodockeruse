@@ -1,2 +1,2 @@
-	FROM adminer:latest
+FROM adminer:latest
 
