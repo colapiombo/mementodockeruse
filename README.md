@@ -52,8 +52,6 @@ sudo apt install build-essential
 * [RabbitMQ](https://hub.docker.com/_/rabbitmq/)
 * [adminer](https://hub.docker.com/_/adminer)
 
-https://hub.docker.com/_/rabbitmq
-
 This project use the following ports :
 
 | Server     | Port |
