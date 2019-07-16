@@ -144,7 +144,7 @@ The starter includes a Makefile to simplify the basic tasks:
     * [http://project.local](http://project.local/)
     * [http://adminer.project.local:8080](http://adminer.project.local:8080/) adminer (server:mariadb, username: default, password: secret)
     * [http://phpmyadmin.project.local](http://phpmyadmin.project.local/) phpmyadmin (server:mariadb, username: default, password: secret)
-    * [http://rabbitmq.project.local:15672](http://rabbitmq.project.local:15672/) phpmyadmin (server:mariadb, username: default, password: secret)
+    * [http://rabbitmq.project.local:15672](http://rabbitmq.project.local:15672/) phpmyadmin ( username: guest, password: guest)
 
 4. Stop and clear services
 
