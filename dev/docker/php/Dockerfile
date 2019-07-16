@@ -7,6 +7,11 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 # Override with custom opcache settings
 # COPY config/opcache.ini $PHP_INI_DIR/conf.d/
 
+RUN apk update && apk upgrade
+RUN apk add --update nano
+
+RUN chgrp -R 0 /var/www/html/
+RUN chmod -R g=u /var/www/html/
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
@@ -21,4 +26,6 @@ RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && echo ${TIMEZONE} >
 RUN docker-php-ext-install pdo pdo_mysql
 
 RUN docker-php-ext-install mysqli
+
+RUN docker-php-ext-install bcmath
 
