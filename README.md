@@ -175,4 +175,4 @@ Here are  other several commands that you can now use from your project director
 
 ## Help me
 
-Any thought, feedback or (hopefully not!)
+Any thought, feedback or (hopefully not!) issue.
